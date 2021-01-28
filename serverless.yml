@@ -1,0 +1,79 @@
+service: flappy-detector
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  # Replace this role with your lambda specific role defined in Terraform
+  role:
+    Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/basic_lambda
+  region: ${opt:region, 'us-west-2'}
+  deploymentBucket: amplify-devops-${self:custom.regionShortName}-serverless-common
+  runtime: python3.8
+  memorySize: 128
+  environment:
+    # These fields allow you to set your log level to see unified service tagging on datadog
+    LOG_LEVEL: ${self:custom.config.log_level}
+  timeout: 300
+  versionFunctions: false
+  logRetentionInDays: 7
+  stackTags:
+    environment: ${opt:stage}
+    application: ${self:service}
+    version: ${env:DD_VERSION, 'unknown'} # Set version tag so that Datadog tags metrics with the version that was deployed
+    lambda_nested_source: python # Set a extra tag so we can tell Datadog logs to parse logs using python pipeline
+  tracing:
+    apiGateway: true
+    lambda: true
+  endpointType: regional
+  httpApi:
+    payload: '2.0'
+
+package:
+  include:
+    - dependencies/**
+  exclude:
+    - .coverage
+    - .git
+    - .gitignore
+    - flappy_detector/**/*.py[cod]
+    - ez_setup.py
+    - MANIFEST.in
+    - requirements.pip
+    - setup.cfg
+    - setup.py
+    - test-requirements.pip
+    - flappy_detector.egg-info/**
+    - docs/**
+    - reports/**
+    - test/**
+    - .tox/**
+    - node_modules/**
+
+functions:
+  hello:
+    handler: flappy_detector/handler.hello
+    description: Lambda project for detecting flappy resources in AWS.
+
+plugins:
+  - serverless-python-requirements
+  - serverless-plugin-datadog
+
+custom:
+  # This tells serverless to use the current stage config as defined in config.yml
+  config: ${file(./config.yml):${opt:stage}}
+  # This forwards logs and metrics to the datadog-forwarder lambda which is deployed in every account and region
+  datadog:
+    forwarder:
+      Fn::Sub: arn:aws:lambda:${self:provider.region}:${AWS::AccountId}:function:datadog-forwarder
+    enableXrayTracing: true
+  regionShortName: ${file(./region_short_names.yml):${self:provider.region}}
+  pythonRequirements:
+    dockerizePip: "non-linux"
+    dockerRunCmdExtraArgs: ['-v', '${env:HOME}:/root']
+    fileName: requirements.pip
+    noDeploy:
+      - boto3
+      - botocore
+    useDownloadCache: true
+    useStaticCache: true

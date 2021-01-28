@@ -1,0 +1,7 @@
+dev:
+  domain: aws.wgen.net
+  log_level: DEBUG
+
+prod:
+  domain: production.wgen.net
+  log_level: INFO

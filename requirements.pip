@@ -1,0 +1,4 @@
+# Place dependencies in this file, following the distutils format:
+# http://docs.python.org/2/distutils/setupscript.html#relationships-between-distributions-and-packages
+amplify-python-logging>=0.1.0,<0.2.0
+aws-xray-sdk>=2.4.2,<3
