@@ -1,0 +1,22 @@
+{
+  "Records": [
+    {
+      "EventSource": "aws:sns",
+      "EventVersion": "1.0",
+      "EventSubscriptionArn": "arn:aws:sns:us-west-2:023225265359:ec2_state_change_uw2:444f1907-0a85-4ef1-b5f5-05be0645ffcd",
+      "Sns": {
+        "Type": "Notification",
+        "MessageId": "9edb8e1a-70ff-5a2e-8c45-d694a62c5c7f",
+        "TopicArn": "arn:aws:sns:us-west-2:023225265359:ec2_state_change_uw2",
+        "Subject": null,
+        "Message": "{\"version\":\"0\",\"id\":\"489c5c98-8609-efa1-a46e-53f00bd1210e\",\"detail-type\":\"EC2 Instance State-change Notification\",\"source\":\"aws.ec2\",\"account\":\"390246465001\",\"time\":\"2021-01-30T03:37:55Z\",\"region\":\"us-west-2\",\"resources\":[\"arn:aws:ec2:us-west-2:390246465001:instance/i-00c827845d2f12d90\"],\"detail\":{\"instance-id\":\"i-00c827845d2f12d90\",\"state\":\"pending\"}}",
+        "Timestamp": "2021-01-30T03:37:55.620Z",
+        "SignatureVersion": "1",
+        "Signature": "jMUZxtVXodKkVirJtX8bqEaVlbBZeCFwaH/18v31qlMDusU2oaHHLIEOq9CKdeh5SOxu1uu5smPutsMfY6oKKmtomdyzYIBryYK5kckZMnLaskQVDBUa2uwZkisBo/jbHtwZorSCOF/Sn4wz3w9FlNNncyGVwL2i3HmGMNcnwY8t3z7/XHDGWXS1sN43ZN8CRc6WtenzVORdFsxniqecoAA/t0+DidJ83rcI0AByoAGsc6mSDTT/DBsEX1ZMvPI3ugdypNX+dwDZCqgO6FSEueMTyUjBpqIVOeqHlo0tmXav4ZMcrURoCnYRBVc0yauwaG8BPvdDwIMPNibxzgodug==",
+        "SigningCertUrl": "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-010a507c1833636cd94bdb98bd93083a.pem",
+        "UnsubscribeUrl": "https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-west-2:023225265359:ec2_state_change_uw2:444f1907-0a85-4ef1-b5f5-05be0645ffcd",
+        "MessageAttributes": {}
+      }
+    }
+  ]
+}
