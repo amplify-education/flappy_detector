@@ -58,8 +58,8 @@ class Ingestor:
         Ingests CloudWatch Events for EC2 state changes
         :param events: List of CloudWatch events.
         """
-        events_by_account = self._group_events(events=events)
-        events_with_metadata = self._find_metadata(grouped_events=events_by_account)
+        grouped_events = self._group_events(events=events)
+        events_with_metadata = self._find_metadata(grouped_events=grouped_events)
 
         self._write_to_dynamodb(events=events_with_metadata)
 
