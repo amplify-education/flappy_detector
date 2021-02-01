@@ -80,13 +80,23 @@ class FlappyDetector:
         flappy_events = {}
 
         for event in events:
-            flappy_event = FlappyEvent(
-                account=event["account"],
-                region=event["region"],
-                environment=event["environment"],
-                application=event["application"],
-            )
-            flappy_event = flappy_events.get(flappy_event.key, flappy_event)
+            try:
+                flappy_event = FlappyEvent(
+                    account=event["account"],
+                    region=event["region"],
+                    environment=event["environment"],
+                    application=event["application"],
+                )
+                flappy_event = flappy_events.get(flappy_event.key, flappy_event)
+            except TypeError:
+                logger.warning(
+                    "Could not handle event",
+                    extra={
+                        "event": event,
+                    }
+                )
+                continue
+
             if not flappy_event.team:
                 flappy_event.team = event.get("team")
 
