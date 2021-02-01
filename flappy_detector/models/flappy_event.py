@@ -1,5 +1,6 @@
 """Model representing a Flappy Event"""
 from dataclasses import dataclass, field
+from typing import Optional
 
 
 @dataclass
@@ -10,7 +11,7 @@ class FlappyEvent:
     region: str
     environment: str
     application: str
-    team: str = None
+    team: Optional[str] = None
     key: str = field(init=False)
     count: int = 0
     spread: int = 0

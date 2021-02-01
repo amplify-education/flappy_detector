@@ -50,7 +50,7 @@ class FlappyDetector:
 
     def __init__(
             self,
-            datadog_client: api,
+            datadog_client,
             dynamodb_table: botostubs.DynamoDB.DynamodbResource.Table,
             max_event_age: timedelta,
             min_number_of_events: int,
@@ -98,7 +98,7 @@ class FlappyDetector:
         :param events: List of DynamoDB records.
         :return: List of FlappyEvents
         """
-        flappy_events = {}
+        flappy_events: Dict[str, FlappyEvent] = {}
 
         for event in events:
             try:

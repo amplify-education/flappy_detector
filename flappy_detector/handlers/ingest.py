@@ -54,7 +54,7 @@ class Ingestor:
     def __init__(
             self,
             sts_client: STS,
-            datadog_client: api,
+            datadog_client,
             dynamodb_table: botostubs.DynamoDB.DynamodbResource.Table,
     ):
         """
@@ -89,7 +89,7 @@ class Ingestor:
         :param events: The CloudWatch events in a flat list.
         :return: The CloudWatch events grouped first by account, then by region.
         """
-        grouped_events = defaultdict(lambda: defaultdict(list))
+        grouped_events: Dict[str, Dict[str, List[Dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
         for event in events:
             grouped_events[event["account"]][event["region"]].append(
                 {
