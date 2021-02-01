@@ -18,7 +18,9 @@ logger = logging.getLogger(__name__)
 
 
 def handler(event, _):
-    """Sample handler"""
+    """
+    Detect handler.
+    """
     logger.info("Event: %s", json.dumps(event))
 
     ssm_client: botostubs.SSM = boto3.client("ssm")
@@ -54,6 +56,13 @@ class FlappyDetector:
             min_number_of_events: int,
             min_spread: int,
     ):
+        """
+        :param datadog_client: Datadog API Client.
+        :param dynamodb_table: Table resource for our datastore.
+        :param max_event_age: Timedelta representing how old an event can be to be evaluated.
+        :param min_number_of_events: The minimum number of events to consider for flapping.
+        :param min_spread: The amount of deviation in the host count below which we consider flapping.
+        """
         self.datadog_client = datadog_client
         self.dynamodb_table = dynamodb_table
         self.max_event_age = max_event_age
@@ -61,12 +70,19 @@ class FlappyDetector:
         self.min_spread = min_spread
 
     def detect_flaps(self):
-        events = self._get_events(max_event_age=self.max_event_age)
+        """
+        Manages looking for flapping events.
+        """
+        events = self._get_events()
         flapping_events = self._find_flapping_events(events=events)
         self._send_alerts(flapping_events=flapping_events)
 
-    def _get_events(self, max_event_age: timedelta) -> List[Dict[str, Any]]:
-        cut_off = Decimal((datetime.now() - max_event_age).timestamp())
+    def _get_events(self) -> List[Dict[str, Any]]:
+        """
+        Get all relevant DynamoDB records.
+        :return: List of all DynamoDB records, no older than the max_event_age.
+        """
+        cut_off = Decimal((datetime.now() - self.max_event_age).timestamp())
         return get_boto3_paged_results(
             self.dynamodb_table.scan,
             results_key="Items",
@@ -77,6 +93,11 @@ class FlappyDetector:
         )
 
     def _find_flapping_events(self, events: List[Dict[str, Any]]) -> List[FlappyEvent]:
+        """
+        Iterate through the given events and calculate which ones are flapping.
+        :param events: List of DynamoDB records.
+        :return: List of FlappyEvents
+        """
         flappy_events = {}
 
         for event in events:
@@ -113,6 +134,10 @@ class FlappyDetector:
         ]
 
     def _send_alerts(self, flapping_events: List[FlappyEvent]):
+        """
+        Send Datadog Events
+        :param flapping_events: List of the FlappyEvents to turn into Datadog events.
+        """
         if not flapping_events:
             return
 

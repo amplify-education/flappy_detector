@@ -57,6 +57,11 @@ class Ingestor:
             datadog_client: api,
             dynamodb_table: botostubs.DynamoDB.DynamodbResource.Table,
     ):
+        """
+        :param sts_client: STS Client for assuming roles.
+        :param datadog_client: Datadog API client.
+        :param dynamodb_table: Table resource for our data store.
+        """
         self.sts_client = sts_client
         self.datadog_client = datadog_client
         self.dynamodb_table = dynamodb_table
@@ -65,6 +70,10 @@ class Ingestor:
             self,
             events: List[Dict[str, Any]],
     ):
+        """
+        Ingests CloudWatch Events for EC2 state changes
+        :param events: List of CloudWatch events.
+        """
         events_by_account = self._group_events(events=events)
         events_with_metadata = self._find_metadata(grouped_events=events_by_account)
 
@@ -75,6 +84,11 @@ class Ingestor:
             self,
             events: List[Dict[str, Any]],
     ) -> Dict[str, Dict[str, List[Dict[str, Any]]]]:
+        """
+        Groups the incoming CloudWatch events by account and region.
+        :param events: The CloudWatch events in a flat list.
+        :return: The CloudWatch events grouped first by account, then by region.
+        """
         grouped_events = defaultdict(lambda: defaultdict(list))
         for event in events:
             grouped_events[event["account"]][event["region"]].append(
@@ -93,6 +107,11 @@ class Ingestor:
             self,
             grouped_events: Dict[str, Dict[str, List[Dict[str, str]]]],
     ) -> List[Dict[str, str]]:
+        """
+        Look up metadata on each event.
+        :param grouped_events: List of CloudWatch events grouped by account and region.
+        :return: A list of records with metadata formatted for upload to DynamoDB.
+        """
         events_with_metadata = []
         for account, events_by_region in grouped_events.items():
             for region, events in events_by_region.items():
@@ -134,6 +153,10 @@ class Ingestor:
             self,
             events: List[Dict[str, str]],
     ):
+        """
+        Writes the list of records to DynamoDB.
+        :param events: List of records.
+        """
         for event in events:
             throttled_call(
                 self.dynamodb_table.put_item,
@@ -144,6 +167,10 @@ class Ingestor:
             self,
             events: List[Dict[str, str]],
     ):
+        """
+        Writes the list of records to Datadog.
+        :param events: List of records.
+        """
         self.datadog_client.Metric.send(
             metrics=[
                 {

@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 
 @dataclass
 class FlappyEvent:
+    """Represents a flappy event"""
+
     account: str
     region: str
     environment: str
@@ -25,6 +27,7 @@ class FlappyEvent:
 
     @property
     def tags(self):
+        """Returns the DD tags for the flappy event"""
         return [
             f"account:{self.account}",
             f"region:{self.region}",
