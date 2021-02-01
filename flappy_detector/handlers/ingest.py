@@ -8,12 +8,9 @@ from typing import Dict, Any, List
 
 import boto3
 import botostubs
-from datadog import initialize, api
 from amplify_aws_utils.resource_helper import boto3_tags_to_dict, throttled_call
 from amplify_aws_utils.clients.sts import STS
 from dateutil.parser import parse
-
-from flappy_detector.utils.enum import Ec2State
 
 logger = logging.getLogger(__name__)
 
@@ -25,20 +22,8 @@ def handler(event, _):
     """
     logger.info("Event: %s", json.dumps(event))
 
-    ssm_client: botostubs.SSM = boto3.client("ssm")
-    initialize(
-        api_key=ssm_client.get_parameter(
-            Name="/account/app_auth/datadog/api_key",
-            WithDecryption=True,
-        )["Parameter"]["Value"],
-        app_key=ssm_client.get_parameter(
-            Name="/account/app_auth/datadog/flappy_detector_app_key",
-            WithDecryption=True,
-        )["Parameter"]["Value"],
-    )
     ingestor = Ingestor(
         sts_client=STS(sts_client=boto3.client("sts")),
-        datadog_client=api,
         dynamodb_table=boto3.resource('dynamodb').Table(os.environ["FLAPPY_DETECTOR_EC2_TABLE"]),
     )
 
@@ -56,16 +41,13 @@ class Ingestor:
     def __init__(
             self,
             sts_client: STS,
-            datadog_client,
             dynamodb_table: botostubs.DynamoDB.DynamodbResource.Table,
     ):
         """
         :param sts_client: STS Client for assuming roles.
-        :param datadog_client: Datadog API client.
         :param dynamodb_table: Table resource for our data store.
         """
         self.sts_client = sts_client
-        self.datadog_client = datadog_client
         self.dynamodb_table = dynamodb_table
 
     def ingest_events(
@@ -80,7 +62,6 @@ class Ingestor:
         events_with_metadata = self._find_metadata(grouped_events=events_by_account)
 
         self._write_to_dynamodb(events=events_with_metadata)
-        self._write_to_datadog(events=events_with_metadata)
 
     def _group_events(
             self,
@@ -164,31 +145,3 @@ class Ingestor:
                 self.dynamodb_table.put_item,
                 Item=event,
             )
-
-    def _write_to_datadog(
-            self,
-            events: List[Dict[str, str]],
-    ):
-        """
-        Writes the list of records to Datadog.
-        :param events: List of records.
-        """
-        self.datadog_client.Metric.send(
-            metrics=[
-                {
-                    "metric": "flappy_detector.churn",
-                    "points": [
-                        (
-                            float(event["timestamp"]),
-                            Ec2State(event["state"]).change,
-                        )
-                    ],
-                    "tags": [
-                        f"{key}:{value}"
-                        for key, value in event.items()
-                    ],
-                    "type": "gauge",
-                }
-                for event in events
-            ]
-        )
