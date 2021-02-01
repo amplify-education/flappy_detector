@@ -1,10 +1,10 @@
 """Tests for the Detect lambda"""
 from decimal import Decimal
-
-from boto3.dynamodb.conditions import Attr
 from datetime import timedelta, datetime
 from unittest import TestCase
 from unittest.mock import MagicMock, patch, call, ANY
+
+from boto3.dynamodb.conditions import Attr
 
 from flappy_detector.handlers.detect import FlappyDetector, handler
 from flappy_detector.models import FlappyEvent
