@@ -130,7 +130,7 @@ class FlappyDetector:
             flappy_event
             for flappy_event in flappy_events.values()
             if flappy_event.count >= self.min_number_of_events and
-               abs(flappy_event.spread) <= self.min_spread
+            abs(flappy_event.spread) <= self.min_spread
         ]
 
     def _send_alerts(self, flapping_events: List[FlappyEvent]):
