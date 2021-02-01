@@ -13,6 +13,7 @@ from boto3.dynamodb.conditions import Attr
 from datadog import initialize, api
 
 from flappy_detector.models import FlappyEvent
+from flappy_detector.utils.enum import Ec2State
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +123,7 @@ class FlappyDetector:
                 flappy_event.team = event.get("team")
 
             flappy_event.count += 1
-            flappy_event.spread += -1 if event["state"] == "terminated" else 1
+            flappy_event.spread += Ec2State(event["state"]).change
 
             flappy_events[flappy_event.key] = flappy_event
 

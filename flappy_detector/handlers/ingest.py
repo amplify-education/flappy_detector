@@ -13,6 +13,8 @@ from amplify_aws_utils.resource_helper import boto3_tags_to_dict, throttled_call
 from amplify_aws_utils.clients.sts import STS
 from dateutil.parser import parse
 
+from flappy_detector.utils.enum import Ec2State
+
 logger = logging.getLogger(__name__)
 
 
@@ -178,7 +180,7 @@ class Ingestor:
                     "points": [
                         (
                             float(event["timestamp"]),
-                            -1 if event["state"] == "terminated" else 1,
+                            Ec2State(event["state"]).change,
                         )
                     ],
                     "tags": [
