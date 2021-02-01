@@ -139,9 +139,6 @@ class FlappyDetector:
         Send Datadog Events
         :param flapping_events: List of the FlappyEvents to turn into Datadog events.
         """
-        if not flapping_events:
-            return
-
         logger.info(
             "Sending flappy events",
             extra={"flapping_apps": flapping_events},
