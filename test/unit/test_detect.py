@@ -10,8 +10,8 @@ from flappy_detector.handlers.detect import FlappyDetector, handler
 from flappy_detector.models import FlappyEvent
 from flappy_detector.utils.enum import Ec2State
 
-MOCK_TEAM = "MOCK_TEAM"
 
+MOCK_TEAM = "MOCK_TEAM"
 MOCK_APPLICATION_SCALE_UP = "MOCK_APPLICATION_SCALE_UP"
 MOCK_APPLICATION_SCALE_DOWN = "MOCK_APPLICATION_SCALE_DOWN"
 MOCK_APPLICATION_FLAPPY = "MOCK_APPLICATION_FLAPPY"
