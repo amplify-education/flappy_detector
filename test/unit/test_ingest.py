@@ -1,16 +1,13 @@
 """Tests for the Ingest lambda"""
 import json
-from amplify_aws_utils.resource_helper import dict_to_boto3_tags
-
 from decimal import Decimal
-from datetime import timedelta, datetime
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import MagicMock, patch, call, ANY
 
-from boto3.dynamodb.conditions import Attr
+from amplify_aws_utils.resource_helper import dict_to_boto3_tags
 
 from flappy_detector.handlers.ingest import Ingestor, handler
-from flappy_detector.models import FlappyEvent
 from flappy_detector.utils.enum import Ec2State
 
 
@@ -203,7 +200,7 @@ class TestHandlerIngest(TestCase):
 
         self.handler._write_to_dynamodb(events=mock_events)
 
-        self.dynamodb_table.put_item.assert_has_called(
+        self.dynamodb_table.put_item.assert_has_calls(
             calls=[
                 call(Item=event)
                 for event in mock_events
