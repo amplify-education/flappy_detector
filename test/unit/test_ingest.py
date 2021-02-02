@@ -11,22 +11,17 @@ from flappy_detector.handlers.ingest import Ingestor, handler
 from flappy_detector.utils.enum import Ec2State
 
 
-MOCK_FLAPPY_DETECTOR_ROLE = "MOCK_FLAPPY_DETECTOR_ROLE"
 MOCK_INSTANCE_ID = "MOCK_INSTANCE_ID"
 MOCK_TEAM = "MOCK_TEAM"
-MOCK_APPLICATION_SCALE_UP = "MOCK_APPLICATION_SCALE_UP"
-MOCK_APPLICATION_SCALE_DOWN = "MOCK_APPLICATION_SCALE_DOWN"
 MOCK_APPLICATION_FLAPPY = "MOCK_APPLICATION_FLAPPY"
 MOCK_ENVIRONMENT = "MOCK_ENVIRONMENT"
 MOCK_REGION = "MOCK_REGION"
 MOCK_ACCOUNT = "MOCK_ACCOUNT"
 MOCK_EC2_TABLE = "MOCK_FLAPPY_DETECTOR_EC2_TABLE"
-MOCK_MAX_EVENT_AGE_IN_MINS = 120
-MOCK_MIN_NUM_EVENTS = 4
-MOCK_MIN_SPREAD = 2
+MOCK_ROLE = "MOCK_FLAPPY_DETECTOR_ROLE"
 ENVIRONMENT_VARIABLES = {
     "FLAPPY_DETECTOR_EC2_TABLE": str(MOCK_EC2_TABLE),
-    "FLAPPY_DETECTOR_ROLE": MOCK_FLAPPY_DETECTOR_ROLE,
+    "FLAPPY_DETECTOR_ROLE": MOCK_ROLE,
 }
 MOCK_TIME_NOW = datetime(2020, 1, 1)
 
@@ -183,7 +178,7 @@ class TestHandlerIngest(TestCase):
         )
         self.sts_client.get_boto3_client_for_account.assert_called_once_with(
             account_id=MOCK_ACCOUNT,
-            role_name=MOCK_FLAPPY_DETECTOR_ROLE,
+            role_name=MOCK_ROLE,
             client_name="ec2",
             region_name=MOCK_REGION,
         )
