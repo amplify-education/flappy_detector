@@ -124,7 +124,18 @@ class FlappyDetector:
                 flappy_event.team = event.get("team")
 
             flappy_event.count += 1
-            flappy_event.spread += Ec2State(event["state"]).change
+            try:
+                flappy_event.spread += Ec2State(event["state"]).change
+            except ValueError:
+                logger.exception(
+                    "Could not handle unknown state=%s",
+                    event["state"],
+                    extra={
+                        "state": event["state"],
+                        "event": event,
+                    }
+                )
+                continue
 
             flappy_events[flappy_event.key] = flappy_event
 
