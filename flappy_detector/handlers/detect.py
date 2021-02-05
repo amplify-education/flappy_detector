@@ -112,7 +112,7 @@ class FlappyDetector:
                 )
                 flappy_event = flappy_events.get(flappy_event.key, flappy_event)
             except TypeError:
-                logger.warning(
+                logger.error(
                     "Could not handle event",
                     extra={
                         "event": event,
