@@ -12,6 +12,9 @@ from flappy_detector.utils.enum import Ec2State
 
 
 MOCK_TEAM = "MOCK_TEAM"
+MOCK_GROUP_NAME = "MOCK_GROUP_NAME"
+MOCK_GROUP_NAME_SCALE_UP = "MOCK_GROUP_NAME_SCALE_UP"
+MOCK_GROUP_NAME_SCALE_DOWN = "MOCK_GROUP_NAME_SCALE_DOWN"
 MOCK_APPLICATION_SCALE_UP = "MOCK_APPLICATION_SCALE_UP"
 MOCK_APPLICATION_SCALE_DOWN = "MOCK_APPLICATION_SCALE_DOWN"
 MOCK_APPLICATION_FLAPPY = "MOCK_APPLICATION_FLAPPY"
@@ -123,6 +126,7 @@ class TestHandlerDetect(TestCase):
             "account": MOCK_ACCOUNT,
             "region": MOCK_REGION,
             "environment": MOCK_ENVIRONMENT,
+            "group_name": MOCK_GROUP_NAME,
         }
 
         events = [
@@ -133,7 +137,7 @@ class TestHandlerDetect(TestCase):
                     "state": Ec2State.TERMINATED.value,
                 }
             }
-            for x in range(10)
+            for _ in range(10)
         ] + [
             {
                 **base_event,
@@ -142,7 +146,7 @@ class TestHandlerDetect(TestCase):
                     "state": Ec2State.RUNNING.value,
                 }
             }
-            for x in range(10)
+            for _ in range(10)
         ] + [
             {
                 **base_event,
@@ -170,6 +174,68 @@ class TestHandlerDetect(TestCase):
                     region=MOCK_REGION,
                     environment=MOCK_ENVIRONMENT,
                     application=MOCK_APPLICATION_FLAPPY,
+                    group_name=MOCK_GROUP_NAME,
+                    count=6,
+                    spread=0,
+                )
+            ]
+        )
+
+    def test_find_flapping_events_by_group(self):
+        """Test Detect find_flapping_events separated by group"""
+        base_event = {
+            "account": MOCK_ACCOUNT,
+            "region": MOCK_REGION,
+            "environment": MOCK_ENVIRONMENT,
+            "application": MOCK_APPLICATION_FLAPPY,
+        }
+
+        events = [
+            {
+                **base_event,
+                **{
+                    "group_name": MOCK_GROUP_NAME_SCALE_DOWN,
+                    "state": Ec2State.TERMINATED.value,
+                }
+            }
+            for _ in range(10)
+        ] + [
+            {
+                **base_event,
+                **{
+                    "group_name": MOCK_GROUP_NAME_SCALE_UP,
+                    "state": Ec2State.RUNNING.value,
+                }
+            }
+            for _ in range(10)
+        ] + [
+            {
+                **base_event,
+                **{
+                    "group_name": MOCK_GROUP_NAME,
+                    "state": state,
+                }
+            }
+            for state in [
+                Ec2State.RUNNING,
+                Ec2State.TERMINATED,
+                Ec2State.RUNNING,
+                Ec2State.TERMINATED,
+                Ec2State.RUNNING,
+                Ec2State.TERMINATED,
+            ]
+        ]
+
+        actual = self.handler._find_flapping_events(events=events)
+        self.assertEqual(
+            actual,
+            [
+                FlappyEvent(
+                    account=MOCK_ACCOUNT,
+                    region=MOCK_REGION,
+                    environment=MOCK_ENVIRONMENT,
+                    application=MOCK_APPLICATION_FLAPPY,
+                    group_name=MOCK_GROUP_NAME,
                     count=6,
                     spread=0,
                 )
@@ -184,6 +250,7 @@ class TestHandlerDetect(TestCase):
                 "region": MOCK_REGION,
                 "environment": MOCK_ENVIRONMENT,
                 "application": None,
+                "group_name": MOCK_GROUP_NAME,
             }
         ]
 
@@ -201,6 +268,7 @@ class TestHandlerDetect(TestCase):
                 "region": MOCK_REGION,
                 "environment": MOCK_ENVIRONMENT,
                 "application": MOCK_APPLICATION_FLAPPY,
+                "group_name": MOCK_GROUP_NAME,
                 "state": Ec2State.TERMINATED.value,
             },
             {
@@ -208,6 +276,7 @@ class TestHandlerDetect(TestCase):
                 "region": MOCK_REGION,
                 "environment": MOCK_ENVIRONMENT,
                 "application": MOCK_APPLICATION_FLAPPY,
+                "group_name": MOCK_GROUP_NAME,
                 "state": Ec2State.RUNNING.value,
                 "team": MOCK_TEAM,
             },
@@ -216,6 +285,7 @@ class TestHandlerDetect(TestCase):
                 "region": MOCK_REGION,
                 "environment": MOCK_ENVIRONMENT,
                 "application": MOCK_APPLICATION_FLAPPY,
+                "group_name": MOCK_GROUP_NAME,
                 "state": Ec2State.TERMINATED.value,
             },
             {
@@ -223,6 +293,7 @@ class TestHandlerDetect(TestCase):
                 "region": MOCK_REGION,
                 "environment": MOCK_ENVIRONMENT,
                 "application": MOCK_APPLICATION_FLAPPY,
+                "group_name": MOCK_GROUP_NAME,
                 "state": Ec2State.RUNNING.value,
             },
         ]
@@ -236,6 +307,7 @@ class TestHandlerDetect(TestCase):
                     region=MOCK_REGION,
                     environment=MOCK_ENVIRONMENT,
                     application=MOCK_APPLICATION_FLAPPY,
+                    group_name=MOCK_GROUP_NAME,
                     team=MOCK_TEAM,
                     count=4,
                     spread=0,
@@ -251,6 +323,7 @@ class TestHandlerDetect(TestCase):
                 region=MOCK_REGION,
                 environment=MOCK_ENVIRONMENT,
                 application=MOCK_APPLICATION_FLAPPY,
+                group_name=MOCK_GROUP_NAME,
                 team=MOCK_TEAM,
                 count=6,
                 spread=0,
@@ -260,6 +333,7 @@ class TestHandlerDetect(TestCase):
                 region=MOCK_REGION,
                 environment=MOCK_ENVIRONMENT,
                 application=MOCK_APPLICATION_FLAPPY,
+                group_name=MOCK_GROUP_NAME,
                 team=MOCK_TEAM,
                 count=6,
                 spread=0,

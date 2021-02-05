@@ -118,10 +118,31 @@ class Ingestor:
 
                 for event in events:
                     cur_metadata = instance_metadata[event["instance_id"]]
+
+                    group_name = cur_metadata.get(
+                        "spotinst:aws:ec2:group:id",
+                        cur_metadata.get("aws:autoscaling:groupName"),
+                    )
+
+                    if not group_name:
+                        logger.warning(
+                            "Event for instance_id:%s has no associated group, ignoring",
+                            event["instance_id"],
+                            extra={
+                                "instance_id": event["instance_id"],
+                                "event": event,
+                                "metadata": cur_metadata,
+                            },
+                        )
+                        continue
+
                     standardized_tags = {
                         "application": cur_metadata.get("application"),
-                        "environment": cur_metadata.get("environment") or cur_metadata.get("env"),
+                        "environment":
+                            cur_metadata.get("environment") or
+                            cur_metadata.get("env"),
                         "team": cur_metadata.get("team"),
+                        "group_name": group_name,
                     }
                     events_with_metadata.append(
                         dict(

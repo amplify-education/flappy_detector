@@ -11,6 +11,7 @@ from flappy_detector.handlers.ingest import Ingestor, handler
 from flappy_detector.utils.enum import Ec2State
 
 
+MOCK_GROUP_NAME = "MOCK_GROUP_NAME"
 MOCK_INSTANCE_ID = "MOCK_INSTANCE_ID"
 MOCK_TEAM = "MOCK_TEAM"
 MOCK_APPLICATION_FLAPPY = "MOCK_APPLICATION_FLAPPY"
@@ -123,8 +124,138 @@ class TestHandlerIngest(TestCase):
             expected,
         )
 
-    def test_find_metadata(self):
-        """Test Ingest find_metadata"""
+    def test_find_metadata_eg(self):
+        """Test Ingest find_metadata for EGs"""
+        mock_events = {
+            MOCK_ACCOUNT: {
+                MOCK_REGION: [
+                    {
+                        "account": MOCK_ACCOUNT,
+                        "region": MOCK_REGION,
+                        "state": Ec2State.TERMINATED.value,
+                        "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
+                        "instance_id": MOCK_INSTANCE_ID,
+                    },
+                ]
+            },
+        }
+        ec2_client = self.sts_client.get_boto3_client_for_account.return_value
+        ec2_client.describe_instances.return_value = {
+            "Reservations": [
+                {
+                    "Instances": [
+                        {
+                            "InstanceId": MOCK_INSTANCE_ID,
+                            "Tags": dict_to_boto3_tags(
+                                {
+                                    "application": MOCK_APPLICATION_FLAPPY,
+                                    "environment": MOCK_ENVIRONMENT,
+                                    "team": MOCK_TEAM,
+                                    "spotinst:aws:ec2:group:id": MOCK_GROUP_NAME,
+                                }
+                            )
+                        }
+                    ]
+                }
+            ]
+        }
+        expected = [
+            {
+                "account": MOCK_ACCOUNT,
+                "region": MOCK_REGION,
+                "state": Ec2State.TERMINATED.value,
+                "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
+                "instance_id": MOCK_INSTANCE_ID,
+                "application": MOCK_APPLICATION_FLAPPY,
+                "group_name": MOCK_GROUP_NAME,
+                "environment": MOCK_ENVIRONMENT,
+                "team": MOCK_TEAM,
+            }
+        ]
+
+        actual = self.handler._find_metadata(grouped_events=mock_events)
+
+        self.assertEqual(
+            actual,
+            expected,
+        )
+        self.sts_client.get_boto3_client_for_account.assert_called_once_with(
+            account_id=MOCK_ACCOUNT,
+            role_name=MOCK_ROLE,
+            client_name="ec2",
+            region_name=MOCK_REGION,
+        )
+        ec2_client.describe_instances.assert_called_once_with(
+            InstanceIds=[MOCK_INSTANCE_ID],
+        )
+
+    def test_find_metadata_asg(self):
+        """Test Ingest find_metadata for ASGs"""
+        mock_events = {
+            MOCK_ACCOUNT: {
+                MOCK_REGION: [
+                    {
+                        "account": MOCK_ACCOUNT,
+                        "region": MOCK_REGION,
+                        "state": Ec2State.TERMINATED.value,
+                        "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
+                        "instance_id": MOCK_INSTANCE_ID,
+                    },
+                ]
+            },
+        }
+        ec2_client = self.sts_client.get_boto3_client_for_account.return_value
+        ec2_client.describe_instances.return_value = {
+            "Reservations": [
+                {
+                    "Instances": [
+                        {
+                            "InstanceId": MOCK_INSTANCE_ID,
+                            "Tags": dict_to_boto3_tags(
+                                {
+                                    "application": MOCK_APPLICATION_FLAPPY,
+                                    "environment": MOCK_ENVIRONMENT,
+                                    "team": MOCK_TEAM,
+                                    "aws:autoscaling:groupName": MOCK_GROUP_NAME,
+                                }
+                            )
+                        }
+                    ]
+                }
+            ]
+        }
+        expected = [
+            {
+                "account": MOCK_ACCOUNT,
+                "region": MOCK_REGION,
+                "state": Ec2State.TERMINATED.value,
+                "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
+                "instance_id": MOCK_INSTANCE_ID,
+                "application": MOCK_APPLICATION_FLAPPY,
+                "group_name": MOCK_GROUP_NAME,
+                "environment": MOCK_ENVIRONMENT,
+                "team": MOCK_TEAM,
+            }
+        ]
+
+        actual = self.handler._find_metadata(grouped_events=mock_events)
+
+        self.assertEqual(
+            actual,
+            expected,
+        )
+        self.sts_client.get_boto3_client_for_account.assert_called_once_with(
+            account_id=MOCK_ACCOUNT,
+            role_name=MOCK_ROLE,
+            client_name="ec2",
+            region_name=MOCK_REGION,
+        )
+        ec2_client.describe_instances.assert_called_once_with(
+            InstanceIds=[MOCK_INSTANCE_ID],
+        )
+
+    def test_find_metadata_no_group(self):
+        """Test Ingest find_metadata with no group"""
         mock_events = {
             MOCK_ACCOUNT: {
                 MOCK_REGION: [
@@ -157,18 +288,7 @@ class TestHandlerIngest(TestCase):
                 }
             ]
         }
-        expected = [
-            {
-                "account": MOCK_ACCOUNT,
-                "region": MOCK_REGION,
-                "state": Ec2State.TERMINATED.value,
-                "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
-                "instance_id": MOCK_INSTANCE_ID,
-                "application": MOCK_APPLICATION_FLAPPY,
-                "environment": MOCK_ENVIRONMENT,
-                "team": MOCK_TEAM,
-            }
-        ]
+        expected = []
 
         actual = self.handler._find_metadata(grouped_events=mock_events)
 

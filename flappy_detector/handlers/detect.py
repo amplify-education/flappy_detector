@@ -108,6 +108,7 @@ class FlappyDetector:
                     region=event["region"],
                     environment=event["environment"],
                     application=event["application"],
+                    group_name=event["group_name"],
                 )
                 flappy_event = flappy_events.get(flappy_event.key, flappy_event)
             except TypeError:
