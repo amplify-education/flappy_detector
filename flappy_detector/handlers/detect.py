@@ -154,6 +154,7 @@ class FlappyDetector:
                      "Please investigate:\n"
                      "  * Scaling might be configured too aggressively\n"
                      "  * New instances are failing to start\n"
+                     "  * Spotinst might be shifting instances between on-demand and spot\n"
                      "  * Host is undersized and failing under load\n %%%",
                 alert_type="warning",
                 aggregation_key=event.key,
