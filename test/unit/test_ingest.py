@@ -107,8 +107,6 @@ class TestHandlerIngest(TestCase):
             MOCK_ACCOUNT: {
                 MOCK_REGION: [
                     {
-                        "account": MOCK_ACCOUNT,
-                        "region": MOCK_REGION,
                         "state": Ec2State.TERMINATED.value,
                         "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
                         "instance_id": MOCK_INSTANCE_ID,
@@ -130,8 +128,6 @@ class TestHandlerIngest(TestCase):
             MOCK_ACCOUNT: {
                 MOCK_REGION: [
                     {
-                        "account": MOCK_ACCOUNT,
-                        "region": MOCK_REGION,
                         "state": Ec2State.TERMINATED.value,
                         "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
                         "instance_id": MOCK_INSTANCE_ID,
@@ -195,8 +191,6 @@ class TestHandlerIngest(TestCase):
             MOCK_ACCOUNT: {
                 MOCK_REGION: [
                     {
-                        "account": MOCK_ACCOUNT,
-                        "region": MOCK_REGION,
                         "state": Ec2State.TERMINATED.value,
                         "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
                         "instance_id": MOCK_INSTANCE_ID,
@@ -260,8 +254,6 @@ class TestHandlerIngest(TestCase):
             MOCK_ACCOUNT: {
                 MOCK_REGION: [
                     {
-                        "account": MOCK_ACCOUNT,
-                        "region": MOCK_REGION,
                         "state": Ec2State.TERMINATED.value,
                         "timestamp": Decimal(MOCK_TIME_NOW.timestamp()),
                         "instance_id": MOCK_INSTANCE_ID,

@@ -79,8 +79,6 @@ class Ingestor:
                     "instance_id": event["detail"]["instance-id"],
                     "state": event["detail"]["state"],
                     "timestamp": Decimal(parse(event["time"]).timestamp()),
-                    "region": event["region"],
-                    "account": event["account"],
                 }
             )
 
@@ -143,6 +141,8 @@ class Ingestor:
                             cur_metadata.get("env"),
                         "team": cur_metadata.get("team"),
                         "group_name": group_name,
+                        "region": region,
+                        "account": account,
                     }
                     events_with_metadata.append(
                         dict(
