@@ -6,14 +6,19 @@ provider:
   name: aws
   # Replace this role with your lambda specific role defined in Terraform
   role:
-    Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/basic_lambda
+    Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/flappy_detector_lambda
   region: ${opt:region, 'us-west-2'}
   deploymentBucket: amplify-devops-${self:custom.regionShortName}-serverless-common
   runtime: python3.8
-  memorySize: 128
+  memorySize: 512
   environment:
     # These fields allow you to set your log level to see unified service tagging on datadog
     LOG_LEVEL: ${self:custom.config.log_level}
+    FLAPPY_DETECTOR_EC2_TABLE: ${self:custom.config.ec2_table}
+    FLAPPY_DETECTOR_ROLE: flappy_detector_assumed
+    FLAPPY_DETECTOR_MAX_EVENT_AGE_IN_MINS: ${self:custom.config.max_event_age_in_mins}
+    FLAPPY_DETECTOR_MIN_NUM_EVENTS: ${self:custom.config.min_num_events}
+    FLAPPY_DETECTOR_MIN_SPREAD: ${self:custom.config.min_spread}
   timeout: 300
   versionFunctions: false
   logRetentionInDays: 7
@@ -51,9 +56,21 @@ package:
     - node_modules/**
 
 functions:
-  hello:
-    handler: flappy_detector/handler.hello
-    description: Lambda project for detecting flappy resources in AWS.
+  ingest:
+    handler: flappy_detector/handlers/ingest.handler
+    description: Ingests events for Flappy Detection
+    events:
+      - sns:
+          # Use our own account id because Fn::Sub doesn't appear to work here...
+          arn: arn:aws:sns:us-west-2:${self:custom.config.account_id}:ec2_state_change_uw2
+      - sns:
+          # Use our own account id because Fn::Sub doesn't appear to work here...
+          arn: arn:aws:sns:us-east-1:${self:custom.config.account_id}:ec2_state_change_ue1
+  detector:
+    handler: flappy_detector/handlers/detect.handler
+    description: Detects flappiness in ingested events
+    events:
+      - schedule: rate(30 minutes)
 
 plugins:
   - serverless-python-requirements
