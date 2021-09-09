@@ -109,7 +109,7 @@ class Ingestor:
                 )
 
                 instance_metadata = {
-                    instance["InstanceId"]: boto3_tags_to_dict(instance["Tags"])
+                    instance["InstanceId"]: boto3_tags_to_dict(instance.get("Tags", {}))
                     for reservation in response["Reservations"]
                     for instance in reservation["Instances"]
                 }
