@@ -1,9 +1,0 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: flappy_detector
-  annotations:
-    github.com/project-slug: amplify-education/flappy_detector
-spec:
-  type: other
-  lifecycle: unknown
