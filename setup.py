@@ -3,8 +3,8 @@ from setuptools import setup, find_packages
 
 
 def get_requirements():
-    """Reads the installation requirements from requirements.pip"""
-    with open("requirements.pip") as reqfile:
+    """Reads the installation requirements from requirements.txt"""
+    with open("requirements.txt") as reqfile:
         return [line for line in reqfile.read().split("\n") if not line.startswith(('#', '-'))]
 
 
