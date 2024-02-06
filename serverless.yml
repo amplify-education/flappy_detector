@@ -44,10 +44,10 @@ package:
     - flappy_detector/**/*.py[cod]
     - ez_setup.py
     - MANIFEST.in
-    - requirements.pip
+    - requirements.txt
     - setup.cfg
     - setup.py
-    - test-requirements.pip
+    - test-requirements.txt
     - flappy_detector.egg-info/**
     - docs/**
     - reports/**
@@ -88,7 +88,7 @@ custom:
   pythonRequirements:
     dockerizePip: "non-linux"
     dockerRunCmdExtraArgs: ['-v', '${env:HOME}:/root']
-    fileName: requirements.pip
+    fileName: requirements.txt
     noDeploy:
       - boto3
       - botocore
