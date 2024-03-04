@@ -4,7 +4,7 @@
     "serverless": "^2.11.1",
     "serverless-plugin-datadog": "^2.3.0",
     "serverless-python-requirements": "^5.1.0",
-    "remark-cli": "^9.0.0",
+    "remark-cli": "^10.0.0",
     "remark-preset-lint-consistent": "^4.0.0",
     "remark-preset-lint-markdown-style-guide": "^4.0.0",
     "remark-validate-links": "^10.0.2"
