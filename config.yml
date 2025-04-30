@@ -6,6 +6,7 @@ amplify-devops-testing:
   min_num_events: 5
   min_spread: 1
 
+  enable_dd_asm: true
 amplify-devops:
   # Must quote, otherwise leading 0 is stripped
   account_id: "023225265359"
