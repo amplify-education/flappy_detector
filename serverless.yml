@@ -84,6 +84,7 @@ custom:
     forwarder:
       Fn::Sub: arn:aws:lambda:${self:provider.region}:${AWS::AccountId}:function:datadog-forwarder
     enableXrayTracing: true
+    enableASM: ${self:custom.config.enable_dd_asm, false}
   regionShortName: ${file(./region_short_names.yml):${self:provider.region}}
   pythonRequirements:
     dockerizePip: "non-linux"

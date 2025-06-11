@@ -14,3 +14,4 @@ amplify-devops:
   max_event_age_in_mins: 120
   min_num_events: 5
   min_spread: 1
+  enable_dd_asm: true
