@@ -1,6 +1,6 @@
 service: flappy-detector
 
-frameworkVersion: '2'
+frameworkVersion: '3'
 
 provider:
   name: aws
@@ -9,7 +9,7 @@ provider:
     Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/flappy_detector_lambda
   region: ${opt:region, 'us-west-2'}
   deploymentBucket: amplify-devops-${self:custom.regionShortName}-serverless-common
-  runtime: python3.8
+  runtime: python3.12
   memorySize: 512
   environment:
     # These fields allow you to set your log level to see unified service tagging on datadog

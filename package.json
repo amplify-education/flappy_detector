@@ -1,7 +1,7 @@
 {
   "name": "flappy-detector",
   "dependencies": {
-    "serverless": "^2.11.1",
+    "serverless": "^3",
     "serverless-plugin-datadog": "^5.73.0",
     "serverless-python-requirements": "^5.1.0",
     "remark-cli": "^9.0.0",
