@@ -5,7 +5,7 @@ Lambda project for detecting flappy resources in AWS.
 ### Prerequisites
 Flappy Detector requires the following to be installed:
 ```text
-python >= 3.8
+python >= 3.12
 tox >= 2.9.1
 docker
 serverless

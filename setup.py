@@ -13,5 +13,4 @@ setup(
     description="Lambda project for detecting flappy resources in AWS.",
     packages=find_packages(),
     install_requires=get_requirements(),
-    test_suite='nose.collector',
 )
