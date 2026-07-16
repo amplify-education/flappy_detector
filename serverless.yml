@@ -35,25 +35,24 @@ provider:
     payload: '2.0'
 
 package:
-  include:
-    - dependencies/**
-  exclude:
-    - .coverage
-    - .git
-    - .gitignore
-    - flappy_detector/**/*.py[cod]
-    - ez_setup.py
-    - MANIFEST.in
-    - requirements.txt
-    - setup.cfg
-    - setup.py
-    - test-requirements.txt
-    - flappy_detector.egg-info/**
-    - docs/**
-    - reports/**
-    - test/**
-    - .tox/**
-    - node_modules/**
+  patterns:
+    - 'dependencies/**'
+    - '!.coverage'
+    - '!.git'
+    - '!.gitignore'
+    - '!flappy_detector/**/*.py[cod]'
+    - '!ez_setup.py'
+    - '!MANIFEST.in'
+    - '!requirements.txt'
+    - '!setup.cfg'
+    - '!setup.py'
+    - '!test-requirements.txt'
+    - '!flappy_detector.egg-info/**'
+    - '!docs/**'
+    - '!reports/**'
+    - '!test/**'
+    - '!.tox/**'
+    - '!node_modules/**'
 
 functions:
   ingest:
